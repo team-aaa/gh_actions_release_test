@@ -15,11 +15,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
+        RELEASE_BRANCHES: 'add-release-flow'
   # update_changelog:
   # create_gh_release:
   push_to_gh_packages:
     runs-on: ubuntu-latest
-
+    needs: bump_tag
     steps:
     - uses: actions/checkout@v1
     - name: Build and publish gem
