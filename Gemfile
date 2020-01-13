@@ -7,7 +7,8 @@ gemspec
 
 group :development, :test do
   gem 'rspec', '~> 3'
-  gem 'ruby_standard', git: 'git@github.com:forward3d/ruby_standard.git', tag: 'v0.8.6'
+  gem 'rubocop'
+  gem 'reek'
 end
 
 group :test do
