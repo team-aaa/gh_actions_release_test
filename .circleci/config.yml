@@ -1,0 +1,88 @@
+definitions:
+  job_base: &job_base
+    docker:
+      - image: circleci/ruby:2.6.5
+        environment:
+          BUNDLE_JOBS: 3
+          BUNDLE_RETRY: 3
+          BUNDLE_PATH: vendor/bundle
+          RAKE_ENV: test
+  add_ssh_keys: &add_ssh_keys
+    add_ssh_keys:
+      fingerprints: []
+  restore_cache: &restore_cache
+    restore_cache:
+      keys:
+        - v2-dependencies-{{ checksum "Gemfile" }}
+  save_cache: &save_cache
+    save_cache:
+      key: v2-dependencies-{{ checksum "Gemfile" }}
+      paths:
+        - vendor/bundle
+  update_bundler: &update_bundler
+    run:
+      name: 'Update bundler'
+      command: gem update bundler
+  bundle_install: &bundle_install
+    run:
+      name: Bundle Install
+      command: bundle install
+
+version: 2.1
+jobs:
+  tests:
+    <<: *job_base
+    steps:
+      - checkout
+      - *add_ssh_keys
+      - *restore_cache
+      - *update_bundler
+      - *bundle_install
+      - *save_cache
+      - run:
+          name: Run rspec
+          command: |
+            mkdir /tmp/test-results
+            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+
+            bundle exec rspec --format progress \
+                              --format RspecJunitFormatter \
+                              --out /tmp/test-results/rspec.xml \
+                              --format progress \
+                              $TEST_FILES
+
+      - store_test_results:
+          path: test_results
+      - store_artifacts:
+          path: coverage
+  rubocop:
+    <<: *job_base
+    steps:
+      - checkout
+      - *add_ssh_keys
+      - *restore_cache
+      - *update_bundler
+      - *bundle_install
+      - *save_cache
+      - run:
+          name: Run Rubocop
+          command: bundle exec rubocop
+  reek:
+    <<: *job_base
+    steps:
+      - checkout
+      - *add_ssh_keys
+      - *restore_cache
+      - *update_bundler
+      - *bundle_install
+      - *save_cache
+      - run:
+          name: Run Reek
+          command: bundle exec reek
+
+workflows:
+  test-and-style:
+    jobs:
+      - tests
+      - rubocop
+      - reek
