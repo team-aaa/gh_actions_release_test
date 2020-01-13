@@ -1,0 +1,29 @@
+name: Release Gem
+
+on:
+  push:
+    branches:
+      - add-release-flow
+
+jobs:
+  bump_tag:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Bump version and push tag
+      uses: anothrNick/github-tag-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
+  # update_changelog:
+  # create_gh_release:
+  push_to_gh_packages:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build and publish gem
+      uses: jstastny/publish-gem-to-github@master
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        owner: team-aaa
