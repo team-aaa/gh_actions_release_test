@@ -22,7 +22,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Update Changelog
-      run: bash -c 'cat CHANGELOG.md'
+      run: bash -c "latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`) && git log --reverse $latest_tag..HEAD --oneline --no-decorate --first-parent | nl -w2 -s'. ' | cat - CHANGELOG.md > CHANGELOG.md.tmp && mv CHANGELOG.md.tmp CHANGELOG.md"
   # secrets = ["GITHUB_TOKEN", "SSH_KEY"]
   # args = ["bash", "-c", "{ [ \"$(git rev-parse --abbrev-ref HEAD)\" = \"master\" ] || exit 78; } && rm -rf .github && git add -A .github && git commit -m \"Remove .github\" && git remote set-url origin git@github.com:GITHUB/PROJECT.git && git push --force origin master"]
   # create_gh_release:
