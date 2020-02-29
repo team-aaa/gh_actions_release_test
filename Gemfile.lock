@@ -29,7 +29,7 @@ GEM
       ast (~> 2.4.0)
     psych (3.1.0)
     rainbow (3.0.0)
-    rake (10.5.0)
+    rake (13.0.1)
     reek (5.5.0)
       codeclimate-engine-rb (~> 0.4.0)
       kwalify (~> 0.7.0)
@@ -78,7 +78,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.17)
   gh_actions_release_test!
-  rake (~> 10.0)
+  rake (~> 13.0)
   reek
   rspec (~> 3)
   rspec_junit_formatter (~> 0.4)
